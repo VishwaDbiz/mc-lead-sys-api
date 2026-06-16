@@ -1,0 +1,10 @@
+%dw 2.0
+
+type auto_36aef125_edbf_4254_b26a_db6de817ebcd_Output_Variables_incomingPayload = {
+  firstName: String, 
+  lastName: String, 
+  phone?: String, 
+  email: String, 
+  _?: Any
+}
+

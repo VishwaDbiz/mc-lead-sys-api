@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="get-lead-implFlow" doc:id="0c245b59-de98-42db-b2af-208f874e0258" >
+		<logger level="INFO" doc:name="Logger" doc:id="de23a540-42ed-4771-a1fd-9d1c03dcaea5" message="*************************************************get lead impl started*************************************************"/>
+		<ee:transform doc:name="Transform Message" doc:id="b9df7d1d-22c8-408c-82a3-8ce13fcdd48c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+"SELECT Id,FirstName,LastName,Company,Phone FROM Lead where id = "  ++ "'" ++ vars.leadId ++ "'"]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:query doc:name="Query" doc:id="7bff7fec-3631-405d-b169-5850362744c7" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query ><![CDATA[#[payload]]]></salesforce:salesforce-query>
+		</salesforce:query>
+		<logger level="INFO" doc:name="Logger" doc:id="cf47854a-e8d5-4194-9d6f-cfc5af6bea21" message="*************************************************get lead impl ended*************************************************" />
+	</flow>
+</mule>

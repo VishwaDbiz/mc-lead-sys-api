@@ -1,0 +1,151 @@
+#%RAML 1.0
+title: Lead System API
+version: v1
+baseUri: /api/v1
+protocols:
+  - HTTPS
+
+mediaType: application/json
+
+types:
+
+  Lead:
+    type: object
+    properties:
+      leadId:
+        type: integer
+        required: true
+        example: 1001
+      firstName:
+        type: string
+        required: true
+        example: John
+      lastName:
+        type: string
+        required: true
+        example: Doe
+      email:
+        type: string
+        required: true
+        example: john.doe@example.com
+      phone:
+        type: string
+        required: false
+        example: "9876543210"
+
+  CreateLeadRequest:
+  type: array
+  items:
+    type: object
+    properties:
+        firstName:
+          type: string
+          required: true
+          example: John
+        lastName:
+          type: string
+          required: true
+          example: Doe
+        email:
+          type: string
+          required: true
+          example: john.doe@example.com
+        phone:
+          type: string
+          required: false
+          example: "9876543210"
+        company:
+          type: string
+          required: false
+          example: "dbiz"     
+
+  CreateLeadResponse:
+    type: object
+    properties:
+      message:
+        type: string
+        example: Lead created successfully
+      leadId:
+        type: integer
+        example: 1001
+
+  ErrorResponse:
+    type: object
+    properties:
+      code:
+        type: string
+        example: NOT_FOUND
+      message:
+        type: string
+        example: Lead not found
+
+/lead:
+  post:
+    displayName: Create Lead
+    description: Create a new lead.
+    body:
+      application/json:
+        example:
+          [{
+            "firstName": "John",
+            "lastName": "Doe",
+            "email": "john.doe@example.com",
+            "phone": "9876543210",
+            "company": "dbiz"
+          }]
+
+    responses:
+      201:
+        body:
+          application/json:
+            type: CreateLeadResponse
+            example:
+              {
+                "message": "Lead created successfully",
+                "leadId": 1001
+              }
+
+      400:
+        body:
+          application/json:
+            type: ErrorResponse
+            example:
+              {
+                "code": "BAD_REQUEST",
+                "message": "Invalid request payload"
+              }
+
+/lead/{leadId}:
+
+  uriParameters:
+    leadId:
+      type: string
+      example: "00Qg5000004yWkHEAU"
+
+  get:
+    displayName: Get Lead By Id
+    description: Retrieve lead details by lead ID.
+
+    responses:
+      200:
+        body:
+          application/json:
+            type: Lead
+            example:
+              {
+                "leadId": 1001,
+                "firstName": "John",
+                "lastName": "Doe",
+                "email": "john.doe@example.com",
+                "phone": "9876543210"
+              }
+
+      404:
+        body:
+          application/json:
+            type: ErrorResponse
+            example:
+              {
+                "code": "NOT_FOUND",
+                "message": "Lead not found"
+              }

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<salesforce:sfdc-config name="Salesforce_Config"
+		doc:name="Salesforce Config"
+		doc:id="eed5d842-b001-47be-86a0-8238cfb39ab5">
+		<salesforce:basic-connection
+			username="${sf.username}" password="${sf.password}"
+			securityToken="${sf.token}" />
+	</salesforce:sfdc-config>
+	<flow name="post-lead-implFlow"
+		doc:id="36aef125-edbf-4254-b26a-db6de817ebcd">
+		<logger level="INFO" doc:name="Logger"
+			doc:id="2b88f553-d664-4cf0-a4e3-bed2870f30f0"
+			message="************************************************************/post lead implementation started************************************************************" />
+		<ee:transform doc:name="Transform Message"
+			doc:id="cd751476-8803-4dd0-9549-446e20dce3dc">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+vars.incomingPayload map {
+    "FirstName": $.firstName,
+    "LastName": $.lastName,
+    "Email": $.email,
+    "Phone": $.phone,
+    "Company": $.company,
+    "External_Id__c": (uuid() )[0 to 24]
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:create
+			doc:id="0e64bc87-a286-412d-80aa-9b48137a0948"
+			config-ref="Salesforce_Config" type="Lead">
+		</salesforce:create>
+		<ee:transform doc:name="Transform Message"
+			doc:id="da5ea699-477a-42b4-90b8-615f989f7a3d">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload.items map ((item, index) -> {
+    "message": "lead sucessfully created",
+    "id": item.id
+} )]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger"
+			doc:id="66a064e2-c302-4648-8351-22ba3875d66e"
+			message="************************************************************/post lead implementation ended************************************************************" />
+	</flow>
+</mule>
