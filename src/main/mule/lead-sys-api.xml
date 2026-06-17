@@ -7,11 +7,16 @@
     <flow name="lead-sys-api-main">
         <http:listener config-ref="HTTP_Listener_config" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
-                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
             </http:response>
             <http:error-response statusCode="#[vars.httpStatus default 500]">
-                <http:body>#[payload]</http:body>
-                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"message": error.errorMessage default error.description
+}]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
             </http:error-response>
         </http:listener>
         <apikit:router config-ref="lead-sys-api-config" />
@@ -136,7 +141,7 @@ output application/json
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-payload]]></ee:set-payload>
+if (sizeOf(payload) == 0) {"message": "No Record Found"} else payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 		<logger level="INFO" doc:name="End Logger" doc:id="278bb08f-a4ed-4a20-8b51-898fb2470c80" message="************************************************************/post lead by Id completed************************************************************" />
@@ -153,6 +158,6 @@ payload]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
         <flow-ref doc:name="Flow Reference to post-lead-implFlow" doc:id="c245eb65-04d9-4c51-a784-253204fd3ff9" name="post-lead-implFlow" />
-        <logger level="INFO" doc:name="End Logger" doc:id="9b79cfd4-b8cf-47a6-b900-e1a8d2450b98" message="************************************************************/post lead completed************************************************************" />
+		<logger level="INFO" doc:name="End Logger" doc:id="9b79cfd4-b8cf-47a6-b900-e1a8d2450b98" message="************************************************************/post lead completed************************************************************" />
     </flow>
 </mule>

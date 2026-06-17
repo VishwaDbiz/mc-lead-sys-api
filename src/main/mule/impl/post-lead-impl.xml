@@ -32,7 +32,7 @@ vars.incomingPayload map {
     "Email": $.email,
     "Phone": $.phone,
     "Company": $.company
-    //"External_Id__c": (uuid() )[0 to 24]
+   // "External_ID__c": (uuid() )[0 to 24]
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
@@ -40,8 +40,12 @@ vars.incomingPayload map {
 			doc:id="0e64bc87-a286-412d-80aa-9b48137a0948"
 			config-ref="Salesforce_Config" type="Lead">
 		</salesforce:create>
-		<ee:transform doc:name="Transform Message"
-			doc:id="da5ea699-477a-42b4-90b8-615f989f7a3d">
+		<choice doc:name="Choice" doc:id="b3166987-01b0-4c9b-bfbb-b297eca80ed7" >
+			<when expression="#[payload.successful == false]">
+				<raise-error doc:name="Raise error" doc:id="59763da0-4b56-48fd-b478-c1dd5d88058c" type="CUSTOM:DUPLICATERECORD" description="The lead which you are requesting to create already exists in the salesforce"/>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="da5ea699-477a-42b4-90b8-615f989f7a3d">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -52,6 +56,8 @@ payload.items map ((item, index) -> {
 } )]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+			</otherwise>
+		</choice>
 		<logger level="INFO" doc:name="Logger"
 			doc:id="66a064e2-c302-4648-8351-22ba3875d66e"
 			message="************************************************************/post lead implementation ended************************************************************" />

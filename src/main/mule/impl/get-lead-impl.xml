@@ -16,7 +16,7 @@ output application/java
 			</ee:message>
 		</ee:transform>
 		<salesforce:query doc:name="Query" doc:id="7bff7fec-3631-405d-b169-5850362744c7" config-ref="Salesforce_Config">
-			<salesforce:salesforce-query ><![CDATA[#[payload]]]></salesforce:salesforce-query>
+			<salesforce:salesforce-query><![CDATA[#[payload]]]></salesforce:salesforce-query>
 		</salesforce:query>
 		<logger level="INFO" doc:name="Logger" doc:id="cf47854a-e8d5-4194-9d6f-cfc5af6bea21" message="*************************************************get lead impl ended*************************************************" />
 	</flow>
