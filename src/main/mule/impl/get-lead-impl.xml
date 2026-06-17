@@ -12,7 +12,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/java
 ---
-"SELECT Id,FirstName,LastName,Company,Phone FROM Lead where id = "  ++ "'" ++ vars.leadId ++ "'"]]></ee:set-payload>
+"SELECT Id,FirstName,LastName,Company,Phone,Email FROM Lead where id = "  ++ "'" ++ vars.leadId ++ "'"]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 		<salesforce:query doc:name="Query" doc:id="7bff7fec-3631-405d-b169-5850362744c7" config-ref="Salesforce_Config">
